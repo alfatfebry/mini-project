@@ -34,6 +34,7 @@ export default function ShowSchools(){
     return <p className="text-center mt-10"> Loading .....</p>
   }
 
+
   return (
     <div className="p-8 md:w-4/5 m-auto shadow-xl">
       <h2 className="mb-6 flex">
