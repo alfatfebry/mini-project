@@ -53,4 +53,12 @@ export default async function handler(req, res) {
     console.error("Error in addSchool API:", error);
     return res.status(500).json({ success: false, error: error.message });
   }
+
+  
 }
+console.log("DB CONFIG:", {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  db: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+});
