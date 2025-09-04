@@ -1,64 +1,44 @@
-import { v2 as cloudinary } from "cloudinary";
-import mysql from "mysql2/promise";
+import pool from '../../lib/db';
+import cloudinary from 'cloudinary';
 
-cloudinary.config({
+
+cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ success: false, error: "Method not allowed" });
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+
+  const { name, address, city, state, contact, email_id, imageBase64 } = req.body;
+
+  if (!name || !address || !city || !state || !contact || !email_id || !imageBase64) {
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
-    const { name, address, city, state, contact, email_id, imageBase64 } = req.body;
-
-    if (!name || !address || !city || !state || !contact || !email_id) {
-      return res.status(400).json({ success: false, error: "All fields are required" });
-    }
-
-    let imageUrl = null;
-
-    if (imageBase64) {
-      const uploadResponse = await cloudinary.uploader.upload(imageBase64, {
-        folder: "schools",
-      });
-      imageUrl = uploadResponse.secure_url;
-    }
-
-    // DB connection
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
+    // upload image ke Cloudinary
+    const uploadResponse = await cloudinary.v2.uploader.upload(imageBase64, {
+      folder: 'schools',
+      resource_type: 'image',
     });
 
-    const [result] = await connection.execute(
-      "INSERT INTO schools (name, address, city, state, contact, email_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [name, address, city, state, contact, email_id, imageUrl]
+    const imageUrl = uploadResponse.secure_url;
+
+    // insert ke Postgres
+    const result = await pool.query(
+      `INSERT INTO schools (name, address, city, state, contact, image, email_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [name, address, city, state, contact, imageUrl, email_id]
     );
 
-    await connection.end();
-
-    return res.status(200).json({
-      success: true,
-      message: "School added successfully",
-      insertedId: result.insertId,
-      imageUrl,
-    });
-  } catch (error) {
-    console.error("Error in addSchool API:", error);
-    return res.status(500).json({ success: false, error: error.message });
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
-
-  
 }
-console.log("DB CONFIG:", {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  db: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-});
