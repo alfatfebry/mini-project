@@ -46,7 +46,7 @@ export default function ShowSchools(){
       {schools.length === 0 ? (
         <p className="text-center text-gray-500">Empty.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {schools.map((school) => (
             <div
               key={school.id}

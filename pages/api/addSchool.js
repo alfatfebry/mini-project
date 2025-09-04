@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // upload image ke Cloudinary
+    
     const uploadResponse = await cloudinary.v2.uploader.upload(imageBase64, {
       folder: 'schools',
       resource_type: 'image',
@@ -29,7 +29,6 @@ export default async function handler(req, res) {
 
     const imageUrl = uploadResponse.secure_url;
 
-    // insert ke Postgres
     const result = await pool.query(
       `INSERT INTO schools (name, address, city, state, contact, image, email_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
