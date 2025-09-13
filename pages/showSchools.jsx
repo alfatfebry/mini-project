@@ -31,10 +31,15 @@ export default function ShowSchools() {
     fetchSchools();
 
     // cek cookie token
-    const token = document.cookie.split("; ").find((row) => row.startsWith("token="));
-    if (!token) {
-      setShowLogin(true);
-    }
+    // const token = document.cookie.split("; ").find((row) => row.startsWith("token="));
+    // if (!token) {
+    //   setShowLogin(true);
+    // }
+
+    const loggedIn = document.cookie.split("; ").find((row) => row.startsWith("loggedIn="));
+      if (!loggedIn) {
+        setShowLogin(true);
+      }
   }, []);
 
   if (loading) {

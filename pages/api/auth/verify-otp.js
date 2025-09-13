@@ -47,16 +47,22 @@ export default async function handler(req, res) {
     );
 
     // set cookie
-    res.setHeader(
-      "Set-Cookie",
+    res.setHeader("Set-Cookie", [
       cookie.serialize("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         maxAge: 60 * 60,
         path: "/",
-      })
-    );
+      }),
+      cookie.serialize("loggedIn", "true", {
+        httpOnly: false, // 👈 bisa diakses dari document.cookie
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 60 * 60,
+        path: "/",
+      }),
+    ]);
 
     return res.status(200).json({ message: "Login berhasil", token });
   } catch (err) {
