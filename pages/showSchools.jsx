@@ -1,19 +1,20 @@
-"use client"
+"use client";
 
 import AddSchool from "@/components/AddSchool";
 import Modal from "@/components/Modal";
-import { useEffect, useState } from "react"
+import LoginForm from "@/components/LoginForm";
+import { useEffect, useState } from "react";
 
-export default function ShowSchools(){
+export default function ShowSchools() {
   const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   const fetchSchools = async () => {
     try {
-      const res = await fetch("/api/getSchool"); 
+      const res = await fetch("/api/getSchool");
       const result = await res.json();
-
       if (result.success) {
         setSchools(result.data);
       } else {
@@ -28,19 +29,29 @@ export default function ShowSchools(){
 
   useEffect(() => {
     fetchSchools();
+
+    // cek cookie token
+    const token = document.cookie.split("; ").find((row) => row.startsWith("token="));
+    if (!token) {
+      setShowLogin(true);
+    }
   }, []);
 
-  if(loading){
-    return <p className="text-center mt-10"> Loading .....</p>
+  if (loading) {
+    return <p className="text-center mt-10">Loading .....</p>;
   }
-
 
   return (
     <div className="p-8 md:w-4/5 m-auto shadow-xl">
       <h2 className="mb-6 flex">
         <span className="text-2xl md:text-3xl font-bold">List Of Schools</span>
 
-        <button onClick={()=> setIsModalOpen(true)} className="ml-auto bg-blue-500 text-white font-bold p-2 rounded cursor-pointer">+ Add School</button>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="ml-auto bg-blue-500 text-white font-bold p-2 rounded cursor-pointer"
+        >
+          + Add School
+        </button>
       </h2>
 
       {schools.length === 0 ? (
@@ -50,7 +61,7 @@ export default function ShowSchools(){
           {schools.map((school) => (
             <div
               key={school.id}
-              className="border[#ff0] rounded-lg shadow-md bg-white overflow-hidden"
+              className="border rounded-lg shadow-md bg-white overflow-hidden"
             >
               <div className="bg-gray-300">
                 <img
@@ -61,22 +72,32 @@ export default function ShowSchools(){
               </div>
               <div className="p-4 flex flex-col gap-4">
                 <h2 className="text-xl font-semibold">{school.name}</h2>
-                <p className="">Address: {school.address}</p>
-                <p className="">City: {school.city}</p>
+                <p>Address: {school.address}</p>
+                <p>City: {school.city}</p>
               </div>
             </div>
           ))}
         </div>
       )}
 
+      {/* Modal Add School */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        
-        <AddSchool onSuccess={()=> {
-          setIsModalOpen(false);
-          fetchSchools();
-        }}/>
+        <AddSchool
+          onSuccess={() => {
+            setIsModalOpen(false);
+            fetchSchools();
+          }}
+        />
+      </Modal>
+
+      {/* Modal Login (auto muncul kalau belum ada token) */}
+      <Modal isOpen={showLogin} onClose={() => {}}>
+        <LoginForm
+          onLoginSuccess={() => {
+            setShowLogin(false);
+          }}
+        />
       </Modal>
     </div>
   );
-
 }
