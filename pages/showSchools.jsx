@@ -30,16 +30,19 @@ export default function ShowSchools() {
   useEffect(() => {
     fetchSchools();
 
-    // cek cookie token
-    // const token = document.cookie.split("; ").find((row) => row.startsWith("token="));
-    // if (!token) {
-    //   setShowLogin(true);
-    // }
-
-    const loggedIn = document.cookie.split("; ").find((row) => row.startsWith("loggedIn="));
-      if (!loggedIn) {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        const data = await res.json();
+        if (!data.isAuthenticated) {
+          setShowLogin(true);
+        }
+      } catch (err) {
         setShowLogin(true);
       }
+    };
+
+    checkAuth();
   }, []);
 
   if (loading) {
