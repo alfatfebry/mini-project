@@ -97,3 +97,10 @@ export default function ShowSchools() {
     </div>
   );
 }
+{/* TEST Modal Hardcode */}
+<div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+  <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-2xl p-6 relative">
+    <h2 className="text-xl font-bold">HARDCODE MODAL</h2>
+    <p>Kalau ini nongol di Vercel → masalahnya di state/showLogin.</p>
+  </div>
+</div>
