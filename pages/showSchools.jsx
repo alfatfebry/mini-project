@@ -9,6 +9,8 @@ export default function ShowSchools() {
   const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 👇 selalu true supaya modal login muncul langsung
   const [showLogin, setShowLogin] = useState(true);
 
   const fetchSchools = async () => {
@@ -29,8 +31,6 @@ export default function ShowSchools() {
 
   useEffect(() => {
     fetchSchools();
-    // langsung paksa muncul login modal saat load
-    //setShowLogin(true);
   }, []);
 
   if (loading) {
@@ -86,12 +86,11 @@ export default function ShowSchools() {
         />
       </Modal>
 
-      {/* Modal Login (langsung muncul waktu halaman load) */}
+      {/* Modal Login (langsung muncul default) */}
       <Modal isOpen={showLogin} onClose={() => {}}>
         <LoginForm
           onLoginSuccess={() => {
             setShowLogin(false);
-            fetchSchools();
           }}
         />
       </Modal>
