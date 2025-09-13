@@ -7,36 +7,51 @@ export default function LoginForm({ onLoginSuccess }) {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("email");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // ⬅️ tambahan
 
   const handleSendOtp = async () => {
-    const res = await fetch("/api/auth/send-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-      credentials: "include", // ⬅️ important
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setStep("otp");
-      setMessage("OTP has been sent to your email.");
-    } else {
-      setMessage(data.error || "Failed to send OTP.");
+    setLoading(true); // mulai loading
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setStep("otp");
+        setMessage("OTP has been sent to your email");
+      } else {
+        setMessage(data.error || "Failed to send OTP");
+      }
+    } catch (err) {
+      setMessage("Unexpected error, please try again");
+    } finally {
+      setLoading(false); // selesai loading
     }
   };
 
   const handleVerifyOtp = async () => {
-    const res = await fetch("/api/auth/verify-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
-      credentials: "include", // ⬅️ important
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setMessage("Login successful.");
-      onLoginSuccess?.();
-    } else {
-      setMessage(data.error || "OTP verification failed.");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage("Login successful");
+        onLoginSuccess?.();
+      } else {
+        setMessage(data.error || "Failed to verify OTP");
+      }
+    } catch (err) {
+      setMessage("Unexpected error, please try again");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,16 +63,19 @@ export default function LoginForm({ onLoginSuccess }) {
         <>
           <input
             type="email"
-            placeholder="Enter your email"
+            placeholder="Email"
             className="border p-2 w-full mb-3 text-center"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <button
             onClick={handleSendOtp}
-            className="w-full bg-blue-500 text-white py-2 rounded cursor-pointer"
+            disabled={loading} // ⬅️ disable saat loading
+            className={`w-full py-2 rounded cursor-pointer ${
+              loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+            } text-white`}
           >
-            Send OTP
+            {loading ? "Sending..." : "Send OTP"}
           </button>
         </>
       ) : (
@@ -71,9 +89,12 @@ export default function LoginForm({ onLoginSuccess }) {
           />
           <button
             onClick={handleVerifyOtp}
-            className="w-full bg-green-500 text-white py-2 rounded cursor-pointer"
+            disabled={loading}
+            className={`w-full py-2 rounded cursor-pointer ${
+              loading ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
+            } text-white`}
           >
-            Verify OTP
+            {loading ? "Verifying..." : "Verify OTP"}
           </button>
         </>
       )}
