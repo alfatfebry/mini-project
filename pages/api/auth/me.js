@@ -4,7 +4,7 @@ import cookie from "cookie";
 export default async function handler(req, res) {
   try {
     const cookies = cookie.parse(req.headers.cookie || "");
-    console.log("Cookies received:", cookies);
+    console.log("Cookies received in /me:", cookies); // debug
 
     const token = cookies.token;
     if (!token) {
@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
+    console.log("Decoded token in /me:", decoded); // debug
 
     return res.status(200).json({ isAuthenticated: true, user: decoded });
   } catch (err) {

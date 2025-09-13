@@ -37,20 +37,17 @@ export default async function handler(req, res) {
       { expiresIn: "1h" }
     );
 
-    // clear OTP
+    // clear OTP biar gak reusable
     await pool.query("UPDATE users SET otp_code=NULL, otp_expiry=NULL WHERE email=$1", [email]);
 
-    // log token buat debug
-    console.log("Generated token:", token);
-
-    // set cookie
+    // ✅ fix cookie setup
     res.setHeader(
       "Set-Cookie",
       cookie.serialize("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // di localhost -> false
-        sameSite: "lax",
-        maxAge: 60 * 60,
+        secure: process.env.NODE_ENV === "production", // wajib true di vercel
+        sameSite: "lax", // strict sering bikin cookie ilang di vercel
+        maxAge: 60 * 60, // 1 jam
         path: "/",
       })
     );
