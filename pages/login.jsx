@@ -52,7 +52,7 @@ export default function LoginPage() {
 
       if (res.ok) {
         setMessage("Login berhasil! Mengalihkan...");
-        window.location.href = "/add-school";
+        window.location.href = "/";
       } else {
         setMessage(data.error || "OTP salah atau expired.");
       }
