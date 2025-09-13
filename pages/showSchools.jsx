@@ -13,7 +13,9 @@ export default function ShowSchools() {
 
   const fetchSchools = async () => {
     try {
-      const res = await fetch("/api/getSchool");
+      const res = await fetch("/api/getSchool", {
+        credentials: "include", // biar cookie ikut
+      });
       const result = await res.json();
       if (result.success) {
         setSchools(result.data);
@@ -21,7 +23,7 @@ export default function ShowSchools() {
         console.error("Fail fetch data", result.error);
       }
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error fetchSchools:", err);
     } finally {
       setLoading(false);
     }
@@ -32,12 +34,23 @@ export default function ShowSchools() {
 
     const checkAuth = async () => {
       try {
-        const res = await fetch("/api/auth/me");
+        const res = await fetch("/api/auth/me", {
+          credentials: "include", // kirim cookie
+        });
+        console.log("checkAuth status:", res.status);
+
         const data = await res.json();
+        console.log("Auth response:", data);
+
         if (!data.isAuthenticated) {
+          console.log("User not authenticated → show login modal");
           setShowLogin(true);
+        } else {
+          console.log("User authenticated → hide login modal");
+          setShowLogin(false);
         }
       } catch (err) {
+        console.error("Auth check error:", err);
         setShowLogin(true);
       }
     };
@@ -45,12 +58,19 @@ export default function ShowSchools() {
     checkAuth();
   }, []);
 
+  // log setiap kali state showLogin berubah
+  useEffect(() => {
+    console.log("showLogin changed:", showLogin);
+  }, [showLogin]);
+
   if (loading) {
     return <p className="text-center mt-10">Loading .....</p>;
   }
 
   return (
     <div className="p-8 md:w-4/5 m-auto shadow-xl">
+      {console.log("render → showLogin state:", showLogin)}
+
       <h2 className="mb-6 flex">
         <span className="text-2xl md:text-3xl font-bold">List Of Schools</span>
 
@@ -98,11 +118,13 @@ export default function ShowSchools() {
         />
       </Modal>
 
-      {/* Modal Login (auto muncul kalau belum ada token) */}
+      {/* Modal Login (auto muncul kalau belum login) */}
       <Modal isOpen={showLogin} onClose={() => {}}>
         <LoginForm
           onLoginSuccess={() => {
+            console.log("Login berhasil → hide login modal");
             setShowLogin(false);
+            fetchSchools();
           }}
         />
       </Modal>

@@ -1,4 +1,3 @@
-// components/LoginForm.jsx
 "use client";
 
 import { useState } from "react";
@@ -6,7 +5,7 @@ import { useState } from "react";
 export default function LoginForm({ onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [step, setStep] = useState("email"); // "email" atau "otp"
+  const [step, setStep] = useState("email");
   const [message, setMessage] = useState("");
 
   const handleSendOtp = async () => {
@@ -14,6 +13,7 @@ export default function LoginForm({ onLoginSuccess }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
+      credentials: "include", // ⬅️ penting
     });
     const data = await res.json();
     if (res.ok) {
@@ -29,6 +29,7 @@ export default function LoginForm({ onLoginSuccess }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
+      credentials: "include", // ⬅️ penting
     });
     const data = await res.json();
     if (res.ok) {
