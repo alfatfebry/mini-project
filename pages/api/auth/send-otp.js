@@ -1,4 +1,10 @@
-import nodemailer from "nodemailer";
+// pages/api/auth/send-otp.js
+import { Pool } from "pg";
+import { sendBrevoOTP } from "@/lib/sendBrevoOTP";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -6,35 +12,35 @@ export default async function handler(req, res) {
   }
 
   const { email } = req.body;
+
   if (!email) {
     return res.status(400).json({ error: "Email is required" });
   }
 
   try {
-    // generate OTP 6 digit
+    // generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 menit
 
-    // setup transporter (pakai Brevo SMTP)
-    const transporter = nodemailer.createTransport({
-      host: "smtp-relay.brevo.com",
-      port: 587,
-      auth: {
-        user: process.env.BREVO_USER,
-        pass: process.env.BREVO_API_KEY,
-      },
-    });
+    // save/update OTP ke DB
+    await pool.query(
+      `
+      INSERT INTO users (email, otp_code, otp_expiry)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (email)
+      DO UPDATE SET otp_code = $2, otp_expiry = $3
+    `,
+      [email, otp, expiry]
+    );
 
-    await transporter.sendMail({
-      from: process.env.BREVO_USER,
-      to: email,
-      subject: "Your OTP Code",
-      text: `Your OTP is ${otp}. It expires in 10 minutes.`,
-    });
+    // kirim OTP via Brevo API
+    await sendBrevoOTP(email, otp);
 
-    console.log("OTP sent:", otp); // buat cek di Vercel logs
-    return res.status(200).json({ success: true, otp }); // sementara return OTP juga
+    return res
+      .status(200)
+      .json({ success: true, message: "OTP sent successfully" });
   } catch (err) {
-    console.error("Send OTP Error:", err);
+    console.error("Error sending OTP:", err);
     return res.status(500).json({ error: "Failed to send OTP" });
   }
 }

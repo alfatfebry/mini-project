@@ -1,11 +1,9 @@
 import { useState } from "react";
-import baseURL from "../lib/config";
-
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [step, setStep] = useState("email"); // email → otp
+  const [step, setStep] = useState("email");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -16,7 +14,7 @@ export default function LoginPage() {
     setMessage("");
 
     try {
-      const res = await fetch(`${baseURL}/api/auth/send-otp`, {
+      const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -44,7 +42,7 @@ export default function LoginPage() {
     setMessage("");
 
     try {
-      const res = await fetch(`${baseURL}/api/auth/verify-otp`, {
+      const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -54,7 +52,7 @@ export default function LoginPage() {
 
       if (res.ok) {
         setMessage("Login berhasil! Mengalihkan...");
-        window.location.href = "/add-school"; // redirect setelah login
+        window.location.href = "/add-school";
       } else {
         setMessage(data.error || "OTP salah atau expired.");
       }
