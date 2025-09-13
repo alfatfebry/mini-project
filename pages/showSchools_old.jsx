@@ -10,9 +10,10 @@ export default function ShowSchools() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 👇 selalu true supaya modal login muncul langsung
+  // 👉 Force true for now → Login modal always shows on first load
   const [showLogin, setShowLogin] = useState(true);
 
+  // Fetch school list from API
   const fetchSchools = async () => {
     try {
       const res = await fetch("/api/getSchool");
@@ -20,10 +21,10 @@ export default function ShowSchools() {
       if (result.success) {
         setSchools(result.data);
       } else {
-        console.error("Fail fetch data", result.error);
+        console.error("Failed fetching schools:", result.error);
       }
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error fetching schools:", err);
     } finally {
       setLoading(false);
     }
@@ -42,6 +43,7 @@ export default function ShowSchools() {
       <h2 className="mb-6 flex">
         <span className="text-2xl md:text-3xl font-bold">List Of Schools</span>
 
+        {/* Button → open Add School modal */}
         <button
           onClick={() => setIsModalOpen(true)}
           className="ml-auto bg-blue-500 text-white font-bold p-2 rounded cursor-pointer"
@@ -50,8 +52,9 @@ export default function ShowSchools() {
         </button>
       </h2>
 
+      {/* Render schools list */}
       {schools.length === 0 ? (
-        <p className="text-center text-gray-500">Empty.</p>
+        <p className="text-center text-gray-500">No schools available.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {schools.map((school) => (
@@ -76,7 +79,7 @@ export default function ShowSchools() {
         </div>
       )}
 
-      {/* Modal Add School */}
+      {/* Add School Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <AddSchool
           onSuccess={() => {
@@ -86,7 +89,7 @@ export default function ShowSchools() {
         />
       </Modal>
 
-      {/* Modal Login (langsung muncul default) */}
+      {/* Login Modal (forced open for now) */}
       <Modal isOpen={showLogin} onClose={() => {}}>
         <LoginForm
           onLoginSuccess={() => {
@@ -97,10 +100,3 @@ export default function ShowSchools() {
     </div>
   );
 }
-{/* TEST Modal Hardcode */}
-<div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-  <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-2xl p-6 relative">
-    <h2 className="text-xl font-bold">HARDCODE MODAL</h2>
-    <p>Kalau ini nongol di Vercel → masalahnya di state/showLogin.</p>
-  </div>
-</div>
