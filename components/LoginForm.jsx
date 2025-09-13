@@ -41,21 +41,21 @@ export default function LoginForm({ onLoginSuccess }) {
   };
 
   return (
-    <div className="p-6 w-[350px]">
-      <h2 className="text-xl font-bold mb-4">Login</h2>
+    <div className="p-6 ">
+      <h2 className="text-3xl text-center font-bold mb-4">Login</h2>
 
       {step === "email" ? (
         <>
           <input
             type="email"
             placeholder="Email"
-            className="border p-2 w-full mb-3"
+            className="border p-2 w-full mb-3 text-center"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <button
             onClick={handleSendOtp}
-            className="w-full bg-blue-500 text-white py-2 rounded"
+            className="w-full bg-blue-500 text-white py-2 rounded cursor-pointer"
           >
             Kirim OTP
           </button>
@@ -64,21 +64,21 @@ export default function LoginForm({ onLoginSuccess }) {
         <>
           <input
             type="text"
-            placeholder="Masukkan OTP"
-            className="border p-2 w-full mb-3"
+            placeholder="Type your OTP"
+            className="border p-2 w-full mb-3 text-center"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
           />
           <button
             onClick={handleVerifyOtp}
-            className="w-full bg-green-500 text-white py-2 rounded"
+            className="w-full bg-green-500 text-white py-2 rounded cursor-pointer"
           >
             Verifikasi OTP
           </button>
         </>
       )}
 
-      {message && <p className="mt-3 text-sm text-gray-600">{message}</p>}
+      {message && <p className="mt-3 text-sm text-gray-600 text-center">{message}</p>}
     </div>
   );
 }
