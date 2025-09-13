@@ -49,7 +49,7 @@ export default async function handler(req, res) {
       cookie.serialize("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // di localhost -> false
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: 60 * 60,
         path: "/",
       })

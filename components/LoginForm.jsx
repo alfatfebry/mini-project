@@ -41,7 +41,7 @@ export default function LoginForm({ onLoginSuccess }) {
   };
 
   return (
-    <div className="p-6 ">
+    <div className="p-2 md:p-6 ">
       <h2 className="text-3xl text-center font-bold mb-4">Login</h2>
 
       {step === "email" ? (
