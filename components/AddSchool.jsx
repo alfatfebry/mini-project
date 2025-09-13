@@ -26,7 +26,7 @@ export default function AddSchool({ onSuccess }) {
       let base64File = null;
 
       if (data.image[0]) {
-        base64File = await toBase64(data.image[0]); // ✅ kirim ke backend
+        base64File = await toBase64(data.image[0]); 
       }
 
       const res = await fetch("/api/addSchool", {
@@ -39,7 +39,7 @@ export default function AddSchool({ onSuccess }) {
           state: data.state,
           contact: data.contact,
           email_id: data.email_id,
-          imageBase64: base64File, // ✅ backend expect ini
+          imageBase64: base64File, 
         }),
       });
 
