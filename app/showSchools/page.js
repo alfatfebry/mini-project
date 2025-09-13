@@ -1,45 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import AddSchool from "@/components/AddSchool";
+import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import LoginForm from "@/components/LoginForm";
+import AddSchool from "@/components/AddSchool";
 
 export default function ShowSchoolsPage() {
   const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 👇 langsung true → modal login selalu muncul pertama kali
+  // 👇 always true so login modal shows by default
   const [showLogin, setShowLogin] = useState(true);
 
-  const fetchSchools = async () => {
-    try {
-      const res = await fetch("/api/getSchool");
-      const result = await res.json();
-      if (result.success) {
-        setSchools(result.data);
-      }
-    } catch (err) {
-      console.error("Error fetching schools:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchSchools = async () => {
+      try {
+        const res = await fetch("/api/getSchool");
+        const result = await res.json();
+        if (result.success) {
+          setSchools(result.data);
+        }
+      } catch (err) {
+        console.error("Error fetching schools:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchSchools();
   }, []);
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading .....</p>;
-  }
+  if (loading) return <p className="text-center mt-10">Loading .....</p>;
 
   return (
     <div className="p-8 md:w-4/5 m-auto shadow-xl">
       <h2 className="mb-6 flex">
         <span className="text-2xl md:text-3xl font-bold">List Of Schools</span>
-
         <button
           onClick={() => setIsModalOpen(true)}
           className="ml-auto bg-blue-500 text-white font-bold p-2 rounded cursor-pointer"
@@ -74,17 +71,17 @@ export default function ShowSchoolsPage() {
         </div>
       )}
 
-      {/* Modal Add School */}
+      {/* Add School modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <AddSchool
           onSuccess={() => {
             setIsModalOpen(false);
-            fetchSchools();
+            location.reload(); // reload to refresh data
           }}
         />
       </Modal>
 
-      {/* Modal Login (default true) */}
+      {/* Login modal (default open) */}
       <Modal isOpen={showLogin} onClose={() => {}}>
         <LoginForm
           onLoginSuccess={() => {
