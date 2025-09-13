@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Modal from "@/components/Modal";
-import LoginForm from "@/components/LoginForm";
-import AddSchool from "@/components/AddSchool";
+import AddSchool from "../../components/AddSchool";
+import Modal from "../../components/Modal";
+import LoginForm from "../../components/LoginForm";
 
 export default function ShowSchoolsPage() {
   const [schools, setSchools] = useState([]);
@@ -36,7 +36,7 @@ export default function ShowSchoolsPage() {
   return (
     <div className="p-8 md:w-4/5 m-auto shadow-xl">
       <h2 className="mb-6 flex">
-        <span className="text-2xl md:text-3xl font-bold">List Of Schools</span>
+        <span className="text-2xl md:text-3xl font-bold">List dsf Of Schools</span>
         <button
           onClick={() => setIsModalOpen(true)}
           className="ml-auto bg-blue-500 text-white font-bold p-2 rounded cursor-pointer"

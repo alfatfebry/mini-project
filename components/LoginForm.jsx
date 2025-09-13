@@ -13,14 +13,14 @@ export default function LoginForm({ onLoginSuccess }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
-      credentials: "include", // ⬅️ penting
+      credentials: "include", // ⬅️ important
     });
     const data = await res.json();
     if (res.ok) {
       setStep("otp");
-      setMessage("OTP terkirim ke email");
+      setMessage("OTP has been sent to your email.");
     } else {
-      setMessage(data.error || "Gagal kirim OTP");
+      setMessage(data.error || "Failed to send OTP.");
     }
   };
 
@@ -29,14 +29,14 @@ export default function LoginForm({ onLoginSuccess }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
-      credentials: "include", // ⬅️ penting
+      credentials: "include", // ⬅️ important
     });
     const data = await res.json();
     if (res.ok) {
-      setMessage("Login berhasil");
+      setMessage("Login successful.");
       onLoginSuccess?.();
     } else {
-      setMessage(data.error || "Gagal verifikasi OTP");
+      setMessage(data.error || "OTP verification failed.");
     }
   };
 
@@ -48,7 +48,7 @@ export default function LoginForm({ onLoginSuccess }) {
         <>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Enter your email"
             className="border p-2 w-full mb-3 text-center"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -57,14 +57,14 @@ export default function LoginForm({ onLoginSuccess }) {
             onClick={handleSendOtp}
             className="w-full bg-blue-500 text-white py-2 rounded cursor-pointer"
           >
-            Kirim OTP
+            Send OTP
           </button>
         </>
       ) : (
         <>
           <input
             type="text"
-            placeholder="Type your OTP"
+            placeholder="Enter your OTP"
             className="border p-2 w-full mb-3 text-center"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
@@ -73,12 +73,14 @@ export default function LoginForm({ onLoginSuccess }) {
             onClick={handleVerifyOtp}
             className="w-full bg-green-500 text-white py-2 rounded cursor-pointer"
           >
-            Verifikasi OTP
+            Verify OTP
           </button>
         </>
       )}
 
-      {message && <p className="mt-3 text-sm text-gray-600 text-center">{message}</p>}
+      {message && (
+        <p className="mt-3 text-sm text-gray-600 text-center">{message}</p>
+      )}
     </div>
   );
 }

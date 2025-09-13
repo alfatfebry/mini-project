@@ -1,6 +1,6 @@
 // pages/api/auth/send-otp.js
 import { Pool } from "pg";
-import { sendBrevoOTP } from "@/lib/sendBrevoOTP";
+import { sendBrevoOTP } from "../../../lib/sendBrevoOTP";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
