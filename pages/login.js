@@ -1,6 +1,7 @@
 import { useState } from "react";
 import baseURL from "../lib/config";
 
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
