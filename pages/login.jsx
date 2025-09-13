@@ -24,12 +24,12 @@ export default function LoginPage() {
 
       if (res.ok) {
         setStep("otp");
-        setMessage("OTP berhasil dikirim ke email kamu!");
+        setMessage("OTP Success, please check your email!");
       } else {
-        setMessage(data.error || "Gagal mengirim OTP.");
+        setMessage(data.error || "Fail send OTP.");
       }
     } catch (err) {
-      setMessage("Terjadi error saat mengirim OTP.");
+      setMessage("Verification OTP has error.");
     } finally {
       setLoading(false);
     }
@@ -51,13 +51,13 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("Login berhasil! Mengalihkan...");
+        setMessage("Login success!...");
         window.location.href = "/";
       } else {
-        setMessage(data.error || "OTP salah atau expired.");
+        setMessage(data.error || "Wrong OTP atau expired.");
       }
     } catch (err) {
-      setMessage("Terjadi error saat verifikasi OTP.");
+      setMessage("Verification otp error.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export default function LoginPage() {
           <form onSubmit={handleSendOtp} className="space-y-4">
             <input
               type="email"
-              placeholder="Masukkan email"
+              placeholder="Input Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -85,7 +85,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
             >
-              {loading ? "Mengirim OTP..." : "Kirim OTP"}
+              {loading ? "Sending OTP..." : "Send OTP"}
             </button>
           </form>
         )}
@@ -94,7 +94,7 @@ export default function LoginPage() {
           <form onSubmit={handleVerifyOtp} className="space-y-4">
             <input
               type="text"
-              placeholder="Masukkan OTP"
+              placeholder="Input OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
@@ -105,7 +105,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
             >
-              {loading ? "Memverifikasi..." : "Verifikasi OTP"}
+              {loading ? "Verification..." : "Verify OTP"}
             </button>
           </form>
         )}
