@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import AddSchool from "@/components/AddSchool";
-import Modal from "@/components/Modal";
-import LoginForm from "@/components/LoginForm";
+import AddSchool from "../../components/AddSchool";
+import Modal from "../../components/Modal";
+import LoginForm from "../../components/LoginForm";
 
 export default function ShowSchools() {
   const [schools, setSchools] = useState([]);
