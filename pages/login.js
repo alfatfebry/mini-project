@@ -1,4 +1,5 @@
 import { useState } from "react";
+import baseURL from "../lib/config";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ export default function LoginPage() {
     setMessage("");
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/send-otp`, {
+      const res = await fetch(`${baseURL}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -42,7 +43,7 @@ export default function LoginPage() {
     setMessage("");
 
     try {
-      const res = await fetch("/api/auth/verify-otp", {
+      const res = await fetch(`${baseURL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
