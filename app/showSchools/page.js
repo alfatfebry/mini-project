@@ -1,65 +1,59 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import AddSchool from "../../components/AddSchool";
 import Modal from "../../components/Modal";
 import LoginForm from "../../components/LoginForm";
 
-export default function ShowSchools() {
+export default function ShowSchoolsPage() {
   const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 👇 default false, nanti di-set true kalau user belum login
   const [showLogin, setShowLogin] = useState(false);
-
-  const fetchSchools = async () => {
-    try {
-      const res = await fetch("/api/getSchool");
-      const result = await res.json();
-      if (result.success) {
-        setSchools(result.data);
-      }
-    } catch (err) {
-      console.error("Error fetching schools:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 👇 cek session login di awal
-  const checkLogin = async () => {
-    try {
-      const res = await fetch("/api/auth/check-session", {
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (!data.loggedIn) {
-        setShowLogin(true); // kalau belum login → munculin modal
-      }
-    } catch (err) {
-      console.error("Error checking session:", err);
-      setShowLogin(true); // fallback kalau error → anggap belum login
-    }
-  };
+  const [showAddSchool, setShowAddSchool] = useState(false);
 
   useEffect(() => {
-    checkLogin();
+    const fetchSchools = async () => {
+      try {
+        const res = await fetch("/api/getSchool");
+        const result = await res.json();
+        if (result.success) {
+          setSchools(result.data);
+        }
+      } catch (err) {
+        console.error("Error fetching schools:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchSchools();
   }, []);
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading .....</p>;
+  async function handleAddSchoolClick() {
+    try {
+      const res = await fetch("/api/auth/me");
+      const result = await res.json();
+
+      if (result.isAuthenticated) {
+        setShowAddSchool(true);
+      } else {
+        setShowLogin(true);
+      }
+    } catch (err) {
+      console.error("Auth check failed:", err);
+      setShowLogin(true);
+    }
   }
+
+  if (loading) return <p className="text-center mt-10">Loading .....</p>;
 
   return (
     <div className="p-8 md:w-4/5 m-auto shadow-xl">
       <h2 className="mb-6 flex">
         <span className="text-2xl md:text-3xl font-bold">List Of Schools</span>
-
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleAddSchoolClick}
           className="ml-auto bg-blue-500 text-white font-bold p-2 rounded cursor-pointer"
         >
           + Add School
@@ -92,21 +86,22 @@ export default function ShowSchools() {
         </div>
       )}
 
-      {/* Modal Add School */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      {/* Add School modal */}
+      <Modal isOpen={showAddSchool} onClose={() => setShowAddSchool(false)}>
         <AddSchool
           onSuccess={() => {
-            setIsModalOpen(false);
-            fetchSchools();
+            setShowAddSchool(false);
+            location.reload(); // reload to refresh data
           }}
         />
       </Modal>
 
-      {/* Modal Login (only if not logged in) */}
-      <Modal isOpen={showLogin} onClose={() => {}}>
+      {/* Login modal */}
+      <Modal isOpen={showLogin} onClose={() => setShowLogin(false)}>
         <LoginForm
           onLoginSuccess={() => {
-            setShowLogin(false); // kalau login sukses → tutup modal
+            setShowLogin(false);
+            setShowAddSchool(true); // langsung buka add school setelah login sukses
           }}
         />
       </Modal>
