@@ -10,7 +10,7 @@ export default function ShowSchoolsPage() {
   const [loading, setLoading] = useState(true);
 
   const [showLogin, setShowLogin] = useState(false);
-  const [showAddSchool, setShowAddSchool] = useState(false);
+  const [showAddSchool, setShowAddSchool] = useState(true);
 
   useEffect(() => {
     const fetchSchools = async () => {
